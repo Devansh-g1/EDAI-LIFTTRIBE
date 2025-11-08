@@ -1415,9 +1415,12 @@ async def health_check():
         await db.command("ping")
         return {
             "status": "healthy",
+            "version": "2.0.0-FIXED-NO-EMAIL-VERIFICATION",
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "database": "connected",
-            "service": "cryptogig-backend"
+            "service": "cryptogig-backend",
+            "features": ["instant_registration", "mongodb_integrated", "no_email_verification"],
+            "git_commit": "force-deploy-v2"
         }
     except Exception as e:
         logger.error(f"Health check failed: {e}")
