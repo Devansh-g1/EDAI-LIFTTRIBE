@@ -1143,7 +1143,12 @@ async def get_stats(current_user: dict = Depends(get_current_user)):
 
 @api_router.get("/")
 async def root():
-    return {"message": "CryptoGig API", "version": "1.0.0"}
+    return {
+        "message": "CryptoGig API", 
+        "version": "2.0.0-no-email-verification",
+        "features": ["instant_registration", "mongodb_integrated"],
+        "deployed": datetime.now(timezone.utc).isoformat()
+    }
 
 # Community/Channel Models
 class Channel(BaseModel):
