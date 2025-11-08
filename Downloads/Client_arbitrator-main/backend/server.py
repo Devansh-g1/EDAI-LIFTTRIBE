@@ -1437,4 +1437,4 @@ logger = logging.getLogger(__name__)
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
-    client.close()
+    client.close()# Force rebuild Sat Nov  8 18:51:27 IST 2025
