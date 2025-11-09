@@ -2,7 +2,12 @@
 nixPkgs = ["python313"]
 
 [phases.install]
-cmds = ["pip install -r backend/requirements.txt"]
+cmds = [
+  "pip install -r backend/requirements.txt"
+]
+
+[phases.build]
+cmds = ["echo 'Build complete'"]
 
 [start]
-cmd = "cd backend && uvicorn server:app --host 0.0.0.0 --port ${PORT:-8000}"
+cmd = "cd backend && exec uvicorn server:app --host 0.0.0.0 --port ${PORT:-8000}"
