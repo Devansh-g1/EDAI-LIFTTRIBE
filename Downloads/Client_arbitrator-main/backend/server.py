@@ -364,13 +364,22 @@ async def register(user_data: UserCreate):
 @api_router.post("/auth/login")
 async def login(credentials: UserLogin):
     user = await db.users.find_one({'email': credentials.email})
-    if not user or not verify_password(credentials.password, user['password_hash']):
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    # Handle both 'password' and 'password_hash' fields for backward compatibility
+    password_field = user.get('password_hash') or user.get('password')
+    if not password_field:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    if not verify_password(credentials.password, password_field):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     token = create_token(user['id'], user.get('active_role', user['role']))
     
     return {
-        'token': token,
+        'access_token': token,
+        'token_type': 'bearer',
         'user': {
             'id': user['id'],
             'email': user['email'],
