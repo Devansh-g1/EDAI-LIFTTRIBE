@@ -20,13 +20,24 @@ from google.auth.transport import requests as google_requests
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 # MongoDB connection
 mongo_url = os.environ.get('MONGO_URL')
 if not mongo_url:
+    logger.error("MONGO_URL environment variable is not set!")
     raise ValueError("MONGO_URL environment variable is required")
 
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ.get('DB_NAME', 'cryptogig_db')]
+logger.info(f"Connecting to MongoDB...")
+try:
+    client = AsyncIOMotorClient(mongo_url, serverSelectionTimeoutMS=5000)
+    db = client[os.environ.get('DB_NAME', 'cryptogig_db')]
+    logger.info("MongoDB client created successfully")
+except Exception as e:
+    logger.error(f"Failed to create MongoDB client: {e}")
+    raise
 
 # Web3 setup
 CONTRACT_ADDRESS = os.environ.get('CONTRACT_ADDRESS', '')
@@ -1436,6 +1447,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Startup message
+logger.info("=" * 50)
+logger.info("CryptoGig Backend Server Starting...")
+logger.info(f"MongoDB Database: {os.environ.get('DB_NAME', 'cryptogig_db')}")
+logger.info(f"Arbitrator Wallet: {ARBITRATOR_WALLET}")
+logger.info("=" * 50)
 
 logging.basicConfig(
     level=logging.INFO,
