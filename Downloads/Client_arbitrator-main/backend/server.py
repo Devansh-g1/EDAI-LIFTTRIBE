@@ -1407,7 +1407,7 @@ async def get_my_channels(current_user: dict = Depends(get_current_user)):
     return channels
 
 # Health check endpoint for Railway
-@app.get("/api/health")
+@api_router.get("/health")
 async def health_check():
     """Health check endpoint for Railway deployment"""
     try:
